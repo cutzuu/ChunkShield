@@ -3,14 +3,15 @@ You can find all necessary information here. Missing something? Let me know.
 # FAQ
 
 ### Will this lag my server?
-- No. There are multiple conditions added(as of 1.0.1) that have to be met for a chunk to get scanned.
+- No. All checks and scans are performed in singular executions so no mass chunk scanning.
+- It takes actions to trigger checks/scans and there is a dice roll to run it once the trigger is primed.
 
 ### Do you still have the old Scheduled Chunk Scanning?
 - No. Chunk Scanning is no longer scheduled and will not scan all loaded chunks going forward.
 
 ### Why should people even bother adding this?
-- ChunkShield is meant to be dropped and forgotten. It prevents varying ways that someone could spam to lag or crash your server.
-- Spam mitigation is left solely up to the server owner as Spigot and Mojang have no default ready-made barriers.
+- ChunkShield prevents common ways that users lag/crash servers. No Server Jar Providers easily provide fixes.
+- Spam mitigation is left solely up to the server owner as Spigot and Mojang have no default measures in place.
 
 ### I don't want XYZ feature.
-- You can toggle all features on or off.
+- All features can be toggled however you choose.
