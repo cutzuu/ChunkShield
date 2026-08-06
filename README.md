@@ -27,6 +27,9 @@ Think of ChunkShield as an extension for Paper/Spigot.
 - Drop and Go Ready! Default Config does not interfere with vanilla gameplay.
 - Lightweight, all checks are made with performance in mind.
 
+<img width="500" height="500" alt="Untitled" src="https://github.com/user-attachments/assets/6e9e1938-09a7-4c58-b2dc-03d92b9ee106" />
+
+
 ## My Message
 ClearLagg's overcompensation left a bad taste and a lot of misinformation, preventing future security development and putting thousands of servers at risk.
 
