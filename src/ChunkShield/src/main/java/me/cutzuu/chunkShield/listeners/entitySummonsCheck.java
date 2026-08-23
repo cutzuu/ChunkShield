@@ -7,6 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -55,26 +56,69 @@ public final class entitySummonsCheck implements Listener
         Entity entity1 = e.getEntity();
         Chunk chunk = entity1.getLocation().getChunk();
 
-        //Stopper 1: Did the owner clear their lists?
+
+        int length = chunk.getEntities().length;
+        if (length > main.Global.configMinEntityWarning && main.Global.configToggleAlertChunkWarning)
+        {
+            {
+                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+
+                Component messageA = Component.text()
+                        .append(Component.text("■ ", NamedTextColor.RED))
+                        .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
+                        .append(Component.text("■", NamedTextColor.RED))
+                        .clickEvent(copyCoords)
+                        .hoverEvent(hoverCoords)
+                        .build();
+
+                Component message1 = Component.text()
+                        .append(Component.text("■ ", NamedTextColor.RED))
+                        .append(Component.text("CHUNK WARNING", NamedTextColor.RED))
+                        .append(Component.text(": ", NamedTextColor.GRAY))
+                        .append(Component.text("Found ", NamedTextColor.YELLOW))
+                        .append(Component.text("x" + length + " ", NamedTextColor.GREEN))
+                        .append(Component.text("entities", NamedTextColor.RED))
+                        .append(Component.text(".", NamedTextColor.YELLOW))
+                        .clickEvent(copyCoords)
+                        .hoverEvent(hoverCoords)
+                        .build();
+
+                Component message2 = Component.text()
+                        .append(Component.text("■ ", NamedTextColor.RED))
+                        .append(Component.text("Location", NamedTextColor.YELLOW))
+                        .append(Component.text(": ", NamedTextColor.GRAY))
+                        .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
+                        .append(Component.text("/ ", NamedTextColor.GRAY))
+                        .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
+                        .clickEvent(copyCoords)
+                        .hoverEvent(hoverCoords)
+                        .build();
+
+                getServer().broadcast(messageA, "chunkShield.alerts");
+                getServer().broadcast(message1, "chunkShield.alerts");
+                getServer().broadcast(message2, "chunkShield.alerts");
+                getServer().broadcast(messageA, "chunkShield.alerts");
+            }
+        }
+
+        //Op 1: Did the owner clear their lists?
         if (main.Global.theEntityLimits.isEmpty() && main.Global.theNamedEntityLimits.isEmpty()) return;
 
 
-
+        //Op 2: Grab entities in chunk.
         for (Entity entity : chunk.getEntities())
         {
-            EntityType type = entity.getType();
             //If the chunk contains no listed entities, move on.
-            if (!main.Global.theEntityLimits.containsKey(type)) continue;
+            if (!main.Global.theEntityLimits.containsKey(entity.getType())) continue;
 
             boolean isNamed = entity.customName() != null;
             (isNamed ? namedEntityList : unnamedEntityList)
-                    .computeIfAbsent(type, k -> new ArrayList<>())
+                    .computeIfAbsent(entity.getType(), k -> new ArrayList<>())
                     .add(entity);
         }
 
-        //Stopper 2: Did we even find any mobs?
-        if (namedEntityList.isEmpty() && unnamedEntityList.isEmpty()) return;
-
+        //Op 4: Grab for any entities that are not named.
         // Unnamed Limits
         for (Map.Entry<EntityType, List<Entity>> entry : unnamedEntityList.entrySet())
         {
@@ -86,17 +130,21 @@ public final class entitySummonsCheck implements Listener
             if (list.size() > limit)
             {
                 int toRemove = list.size() - limit;
-                Collections.shuffle(list); // optional fairness
                 for (main.Global.Entity_unnamedCount = 0; main.Global.Entity_unnamedCount < toRemove; main.Global.Entity_unnamedCount++)
                 {
                     list.get(main.Global.Entity_unnamedCount).remove();
+                    list.get(main.Global.Entity_unnamedCount).getLocation();
+                    if (main.Global.Entity_unnamedCount < 10)
+                    {
+                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(main.Global.Entity_unnamedCount).getLocation().toCenterLocation(), 4);
+                    }
                     main.Global.entitiesRemoved++;
                 }
                 if (main.Global.Entity_unnamedCount != 0)
                 {
                     if (main.Global.configToggleAlertEntityLimit)
                     {
-                        ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                         Component messageA = Component.text()
@@ -148,17 +196,20 @@ public final class entitySummonsCheck implements Listener
             if (list.size() > cap)
             {
                 int toRemove = list.size() - cap;
-                Collections.shuffle(list);
                 for (main.Global.Entity_namedCount = 0; main.Global.Entity_namedCount < toRemove; main.Global.Entity_namedCount++)
                 {
                     list.get(main.Global.Entity_namedCount).remove();
+                    if (main.Global.Entity_namedCount < 10)
+                    {
+                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(main.Global.Entity_unnamedCount).getLocation().toCenterLocation(), 4);
+                    }
                     main.Global.entitiesRemoved++;
                 }
                 if (main.Global.Entity_namedCount != 0)
                 {
                     if (main.Global.configToggleAlertEntityLimit)
                     {
-                        ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                         Component messageA = Component.text()
@@ -173,7 +224,7 @@ public final class entitySummonsCheck implements Listener
                                 .append(Component.text("■ ", NamedTextColor.RED))
                                 .append(Component.text("Removed ", NamedTextColor.YELLOW))
                                 .append(Component.text("x" + main.Global.Entity_namedCount + " ", NamedTextColor.GREEN))
-                                .append(Component.text("Named ", NamedTextColor.GOLD))
+                                .append(Component.text("Named ", NamedTextColor.GREEN))
                                 .append(Component.text(type.name(), NamedTextColor.GOLD))
                                 .append(Component.text(".", NamedTextColor.YELLOW))
                                 .clickEvent(copyCoords)

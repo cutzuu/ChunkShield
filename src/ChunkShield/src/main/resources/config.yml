@@ -11,6 +11,10 @@
 #        Configuration        #
 ###############################
 
+# When anything is purged, a small flame poofs.
+# Does not occur during Chunk Loading and stops after 10 instantaneous removals.
+PurgeEffects: true
+
 # A HUGE CPU Saver. Minimum Threshold to justify checking a chunk at all.
 # This only applies to Scan-Chunks-Upon-Loading.
 MinimumEntityRequirement: 10    # Recommend 5 - 25.
@@ -44,7 +48,8 @@ Scan-Chunk-Upon-Opening-Container: false
 # Prevent Server Lag/Crashing via checking vicinity limit for boats and mineCarts.
 VehicleRadiusCheck: true
 
-# Prevents End Portal Frames from getting placed. If you're fine with losing End Portal Frames, set to false then add END_PORTAL_FRAME to list.
+# Keep this true if you dont want players to place End Portal Frames.
+# If you add End Portal Frames to list, this can remove them.
 # This instead, prevents placement and removes any End Portal Frames found in the inventory.
 end-portal-fix: true
 
@@ -66,7 +71,7 @@ vehicle-radius: 32
 # The amount of block items that can be in one chunk.
 # NOTE: Doors are two entities in one so multiply your limit by 2.
 # NOTE: Bedrock Limit will NOT remove the floor or nether roof.
-# NOTE: REDSTONE does not cover anything. Must use REDSTONE_WIRE.
+# NOTE: Limiting REDSTONE placed? Must use REDSTONE_WIRE.
 block-limits:
   ANVIL: 12
   CHIPPED_ANVIL: 12

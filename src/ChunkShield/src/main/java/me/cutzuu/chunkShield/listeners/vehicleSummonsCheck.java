@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -107,7 +108,7 @@ public final class vehicleSummonsCheck implements Listener
                     {
                         if (main.Global.configToggleAlertVehicleLimit)
                         {
-                            ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                            ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                             HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                             Component messageA = Component.text()
@@ -143,6 +144,7 @@ public final class vehicleSummonsCheck implements Listener
                             getServer().broadcast(messageA, "chunkShield.alerts");
                         }
                         entity.remove();
+                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, entity.getLocation().toCenterLocation(), 4);
                         main.Global.vehiclesRemoved++;
                         if (--toRemove == 0) break; // don't return; let minecart check run
                     }

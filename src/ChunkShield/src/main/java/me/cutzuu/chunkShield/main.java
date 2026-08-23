@@ -6,16 +6,15 @@
 
 // https://github.com/cutzuu/chunkshield
 // Supports: 26.2
-// Version: 1.0.8
+// Version: 1.0.9
 
-// Dated: August 3, 2026
+// Dated: August 23, 2026
 
 
 package me.cutzuu.chunkShield;
 import me.cutzuu.chunkShield.listeners.blockPlaceChecker;
 import me.cutzuu.chunkShield.listeners.entitySummonsCheck;
 import me.cutzuu.chunkShield.listeners.vehicleSummonsCheck;
-import me.cutzuu.chunkShield.listeners.*;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -131,6 +130,8 @@ public final class main extends JavaPlugin implements Listener
         public static boolean configToggleAlertBlockLimit;
         public static boolean configToggleAlertEntityLimit;
         public static boolean configToggleAlertVehicleLimit;
+
+        public static boolean configTogglePurgeEffect;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -163,6 +164,8 @@ public final class main extends JavaPlugin implements Listener
         Global.configToggleAlertBlockLimit = this.getConfig().getBoolean("BlockLimits");
         Global.configToggleAlertEntityLimit = this.getConfig().getBoolean("EntityLimits");
         Global.configToggleAlertVehicleLimit = this.getConfig().getBoolean("VehicleLimits");
+
+        Global.configTogglePurgeEffect = this.getConfig().getBoolean("PurgeEffects");
 
         ConfigurationSection section0 = config.getConfigurationSection("entity-limits");
         if (section0 != null)
@@ -374,7 +377,7 @@ public final class main extends JavaPlugin implements Listener
                     {
                         if (type != EntityType.FALLING_BLOCK)
                         {
-                            ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                            ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                             HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                             Component messageA = Component.text()
@@ -437,7 +440,7 @@ public final class main extends JavaPlugin implements Listener
                 {
                     if (Global.configToggleAlertEntityLimit)
                     {
-                        ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                         Component messageA = Component.text()
@@ -490,7 +493,7 @@ public final class main extends JavaPlugin implements Listener
             if (length > Global.configMinEntityWarning && Global.configToggleAlertChunkWarning)
             {
                 {
-                    ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                    ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                     HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                     Component messageA = Component.text()
@@ -535,7 +538,7 @@ public final class main extends JavaPlugin implements Listener
         {
             if (Global.configToggleAlertChunkScanned)
             {
-                ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                 HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                 Component messageA = Component.text()
@@ -548,7 +551,7 @@ public final class main extends JavaPlugin implements Listener
 
                 Component message1 = Component.text()
                         .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("A ChunkScan met ", NamedTextColor.RED))
+                        .append(Component.text("A Loaded Chunk met ", NamedTextColor.RED))
                         .append(Component.text("6 conditions ", NamedTextColor.GOLD))
                         .append(Component.text("and removed ", NamedTextColor.RED))
                         .append(Component.text("x" + totality + " ", NamedTextColor.GREEN))

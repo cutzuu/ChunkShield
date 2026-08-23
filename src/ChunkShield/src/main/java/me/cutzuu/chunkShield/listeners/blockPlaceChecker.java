@@ -28,6 +28,16 @@ import static org.bukkit.Bukkit.getServer;
 
 public final class blockPlaceChecker implements Listener
 {
+    // Some blocks/items do not translate correctly when limited.
+    // Ex: REDSTONE is not REDSTONE_WIRE
+
+
+    public static List<Material> nonItemBlocks = List.of
+            (
+                    Material.REDSTONE_WIRE,
+                    Material.TRIPWIRE
+            );
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent e)
     {
@@ -170,7 +180,7 @@ public final class blockPlaceChecker implements Listener
                         {
                             if (main.Global.configToggleAlertBlockLimit)
                             {
-                                ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                                 HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                                 Component messageA = Component.text()
@@ -211,13 +221,14 @@ public final class blockPlaceChecker implements Listener
                             if (player.hasPermission("chunkShield.blockBypass")) return;
                             if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
                             else b.setType(Material.AIR, false);
+                            if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
 
                         }
                         else
                         {
                             if (main.Global.configToggleAlertBlockLimit)
                             {
-                                ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                                 HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                                 Component messageA = Component.text()
@@ -261,10 +272,14 @@ public final class blockPlaceChecker implements Listener
                             // Material.REDSTONE does not register placing down redstone which then gets turned into REDSTONE_WIRE.
                             // I dont even know what the hell Material.REDSTONE references. It does nothing when tested...
                             // Will revisit one day.....................................
-                            if (b.getType() == Material.REDSTONE_WIRE && main.Global.theBlockLimits.containsKey(Material.REDSTONE_WIRE))
+
+
+
+                            if (nonItemBlocks.contains(b.getType()) && main.Global.theBlockLimits.containsKey(b.getType()))
                             {
                                 if (player.getGameMode() == GameMode.CREATIVE) b.setType(Material.AIR);
                                 else b.breakNaturally();
+                                if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
                             }
                             else b.setType(Material.STONE, false); // no physics to avoid cascades
                         }
@@ -274,7 +289,7 @@ public final class blockPlaceChecker implements Listener
             }
         }
         // ===== 2) BLOCKS: collective DOOR/TRAPDOOR cap =====
-        else if (block.getBlockData() instanceof Door)
+        else if (block.getBlockData() instanceof Door || block.getBlockData() instanceof TrapDoor)
         {
             if (main.Global.configCollectiveDoorLimit >= 0)
             {
@@ -318,7 +333,7 @@ public final class blockPlaceChecker implements Listener
                                 {
                                     if (main.Global.configToggleAlertBlockLimit)
                                     {
-                                        ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                                         Component messageA = Component.text()
@@ -359,6 +374,7 @@ public final class blockPlaceChecker implements Listener
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
                                     if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
                                     else b.setType(Material.AIR, false);
+                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
                                     main.Global.blocksPrevented++;
                                 }
                             }
@@ -369,7 +385,7 @@ public final class blockPlaceChecker implements Listener
                                 {
                                     if (main.Global.configToggleAlertBlockLimit)
                                     {
-                                        ClickEvent copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+                                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
                                         Component messageA = Component.text()
@@ -410,6 +426,7 @@ public final class blockPlaceChecker implements Listener
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
                                     if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
                                     else b.setType(Material.AIR, false);
+                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
                                     main.Global.blocksPrevented++;
                                 }
                             }
