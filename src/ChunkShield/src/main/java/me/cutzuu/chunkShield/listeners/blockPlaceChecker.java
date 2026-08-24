@@ -7,6 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -321,10 +322,8 @@ public final class blockPlaceChecker implements Listener
                     {
                         for (int zLevel = 0; zLevel < 16; zLevel++)
                         {
-                            Block b = chunk.getBlock(xLevel, yLevel, zLevel);
-                            BlockData data = b.getBlockData();
-
-                            // Count bottom halves of doors once
+                            Block b1 = chunk.getBlock(xLevel, yLevel, zLevel);
+                            BlockData data = b1.getBlockData();
                             if (data instanceof Door d)
                             {
                                 if (d.getHalf() == Door.Half.TOP) continue;
@@ -372,9 +371,15 @@ public final class blockPlaceChecker implements Listener
                                     }
 
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
-                                    if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
-                                    else b.setType(Material.AIR, false);
-                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
+                                    if (player.getGameMode() != GameMode.CREATIVE)b1.breakNaturally();
+                                    else
+                                    {
+                                        b1.setType(Material.AIR, false);
+                                        // 1.0.10 Fix - Top Half of doors would remain when placed/limited in Creative.
+                                        Block b2 = world.getBlockAt(b1.getX(), b1.getY()+1, b1.getZ());
+                                        b2.setType(Material.AIR, false);
+                                    }
+                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b1.getLocation().toCenterLocation(), 4);
                                     main.Global.blocksPrevented++;
                                 }
                             }
@@ -424,9 +429,9 @@ public final class blockPlaceChecker implements Listener
                                     }
 
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
-                                    if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
-                                    else b.setType(Material.AIR, false);
-                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b.getLocation().toCenterLocation(), 4);
+                                    if (player.getGameMode() != GameMode.CREATIVE)b1.breakNaturally();
+                                    else b1.setType(Material.AIR, false);
+                                    if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, b1.getLocation().toCenterLocation(), 4);
                                     main.Global.blocksPrevented++;
                                 }
                             }
