@@ -1,5 +1,5 @@
 name: ChunkShield
-version: '1.0.9'
+version: '1.0.10'
 main: me.cutzuu.chunkShield.main
 api-version: '26.2'
 
@@ -27,4 +27,4 @@ permissions:
     default: op
   chunkShield.blockBypass:
     description: Allows user to bypass block limits set by ChunkShield.
-    default: op
+    default: false

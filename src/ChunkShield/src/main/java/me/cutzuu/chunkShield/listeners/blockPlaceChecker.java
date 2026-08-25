@@ -7,7 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Gate;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,15 +29,18 @@ import static org.bukkit.Bukkit.getServer;
 
 public final class blockPlaceChecker implements Listener
 {
-    // Some blocks/items do not translate correctly when limited.
-    // Ex: REDSTONE is not REDSTONE_WIRE
+    public static class Global
+    {
+        // Some blocks/items do not translate correctly when limited.
+        // Ex: REDSTONE is not REDSTONE_WIRE
+        public static List<Material> nonItemBlocks = List.of
+                (
+                        Material.REDSTONE_WIRE,
+                        Material.TRIPWIRE
+                );
+    }
 
 
-    public static List<Material> nonItemBlocks = List.of
-            (
-                    Material.REDSTONE_WIRE,
-                    Material.TRIPWIRE
-            );
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent e)
@@ -61,16 +64,12 @@ public final class blockPlaceChecker implements Listener
         // Patch to prevent unnecessary portal destruction.
         if (block.getType() == Material.END_PORTAL_FRAME)
         {
-            if (main.Global.configToggleEndPortalFix)
-            {
-                againstEndPortalCheck(e, player, secondHand, inventory);
-            }
-            else if (main.Global.configToggleBlockCheck)
+            if (main.Global.configToggleEndPortalFix) againstEndPortalCheck(e, player, secondHand, inventory);
+            else
             {
                 if (main.Global.configToggleBlockCheck_50)
                 {
-                    if (ThreadLocalRandom.current().nextBoolean())
-                    {blockChunkCheck(chunk, placedType, x, y, z, playerName, material, block, player);}
+                    if (ThreadLocalRandom.current().nextBoolean()) blockChunkCheck(chunk, placedType, x, y, z, playerName, material, block, player);
                 }
                 else blockChunkCheck(chunk, placedType, x, y, z, playerName, material, block, player);
             }
@@ -88,10 +87,15 @@ public final class blockPlaceChecker implements Listener
     }
 
     /////////////////////////////////////////////////////////////////////////////
+
+    //No need for owner to block End Portal Frames
+    //This is a fix/feature for if End Portal Frames get blocked.
+    //If normally limited, it breaks end portals.
+    //This however, prevents placing them without ruining portals.
+    //Why the fix? If you interact with a portal, that can also trigger a removal if limited bc the frame block is updated.
     private static void againstEndPortalCheck(BlockPlaceEvent e, Player player, ItemStack secondHand, PlayerInventory inventory)
     {
-        Block against = e.getBlockAgainst();
-        if (against.getType() == Material.END_PORTAL_FRAME)
+        if (e.getBlockAgainst().getType() == Material.END_PORTAL_FRAME)
         {
             // Main Hand Check
             if (player.getInventory().getItemInMainHand().getType() == Material.ENDER_EYE)
@@ -99,6 +103,7 @@ public final class blockPlaceChecker implements Listener
                 // Check1
                 if (secondHand.getType() == Material.END_PORTAL_FRAME)
                 {
+                    if (player.hasPermission("chunkShield.blockBypass")) return;
                     e.setCancelled(true);
                     main.Global.blocksPrevented++;
                     inventory.setItemInOffHand(null);
@@ -111,6 +116,7 @@ public final class blockPlaceChecker implements Listener
                 // Check1
                 if (player.getInventory().getItemInMainHand().getType() == Material.END_PORTAL_FRAME)
                 {
+                    if (player.hasPermission("chunkShield.blockBypass")) return;
                     e.setCancelled(true);
                     main.Global.blocksPrevented++;
                     inventory.remove(Material.END_PORTAL_FRAME);
@@ -119,6 +125,7 @@ public final class blockPlaceChecker implements Listener
         }
         else
         {
+            if (player.hasPermission("chunkShield.blockBypass")) return;
             e.setCancelled(true);
             main.Global.blocksPrevented++;
             inventory.remove(Material.END_PORTAL_FRAME);
@@ -179,45 +186,7 @@ public final class blockPlaceChecker implements Listener
                         Block b = matches.get(i);
                         if (placedType.isItem())
                         {
-                            if (main.Global.configToggleAlertBlockLimit)
-                            {
-                                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                                HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                                Component messageA = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                        .append(Component.text("■", NamedTextColor.RED))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                Component message1 = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text(playerName + " ", NamedTextColor.GOLD))
-                                        .append(Component.text("reached ", NamedTextColor.YELLOW))
-                                        .append(Component.text(b.getType() + " ", NamedTextColor.RED))
-                                        .append(Component.text("limit.", NamedTextColor.YELLOW))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                Component message2 = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text("Location", NamedTextColor.YELLOW))
-                                        .append(Component.text(": ", NamedTextColor.GRAY))
-                                        .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                        .append(Component.text("/ ", NamedTextColor.GRAY))
-                                        .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                getServer().broadcast(messageA, "chunkShield.alerts");
-                                getServer().broadcast(message1, "chunkShield.alerts");
-                                getServer().broadcast(message2, "chunkShield.alerts");
-                                getServer().broadcast(messageA, "chunkShield.alerts");
-                            }
+                            if (main.Global.configToggleAlertBlockLimit) alertBLOCKLimitReached(x, y, z, playerName, b, world);
 
                             if (player.hasPermission("chunkShield.blockBypass")) return;
                             if (player.getGameMode() != GameMode.CREATIVE)b.breakNaturally();
@@ -227,56 +196,13 @@ public final class blockPlaceChecker implements Listener
                         }
                         else
                         {
-                            if (main.Global.configToggleAlertBlockLimit)
-                            {
-                                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                                HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                                Component messageA = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                        .append(Component.text("■", NamedTextColor.RED))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                Component message1 = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text(playerName + " ", NamedTextColor.GOLD))
-                                        .append(Component.text("reached ", NamedTextColor.YELLOW))
-                                        .append(Component.text(b.getType() + " ", NamedTextColor.RED))
-                                        .append(Component.text("limit.", NamedTextColor.YELLOW))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                Component message2 = Component.text()
-                                        .append(Component.text("■ ", NamedTextColor.RED))
-                                        .append(Component.text("Location", NamedTextColor.YELLOW))
-                                        .append(Component.text(": ", NamedTextColor.GRAY))
-                                        .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                        .append(Component.text("/ ", NamedTextColor.GRAY))
-                                        .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                        .clickEvent(copyCoords)
-                                        .hoverEvent(hoverCoords)
-                                        .build();
-
-                                getServer().broadcast(messageA, "chunkShield.alerts");
-                                getServer().broadcast(message1, "chunkShield.alerts");
-                                getServer().broadcast(message2, "chunkShield.alerts");
-                                getServer().broadcast(messageA, "chunkShield.alerts");
-                            }
+                            if (main.Global.configToggleAlertBlockLimit) alertBLOCKLimitReached(x, y, z, playerName, b, world);
                             if (player.hasPermission("chunkShield.blockBypass")) return;
 
                             // 1.0.7 Fix - Material.REDSTONE_WIRE is not considered TRUE in Material.isItem().
-                            // Paper Staff consider it a technicality but I disagree. This logic clearly highlights an issue with the API...
-                            // Material.REDSTONE does not register placing down redstone which then gets turned into REDSTONE_WIRE.
-                            // I dont even know what the hell Material.REDSTONE references. It does nothing when tested...
-                            // Will revisit one day.....................................
-
-
-
-                            if (nonItemBlocks.contains(b.getType()) && main.Global.theBlockLimits.containsKey(b.getType()))
+                            // This fix has been updated to handle any non-item materials from an added list above.
+                            // Such as STRING being transformed to TRIPWIRE
+                            if (Global.nonItemBlocks.contains(b.getType()) && main.Global.theBlockLimits.containsKey(b.getType()))
                             {
                                 if (player.getGameMode() == GameMode.CREATIVE) b.setType(Material.AIR);
                                 else b.breakNaturally();
@@ -290,7 +216,7 @@ public final class blockPlaceChecker implements Listener
             }
         }
         // ===== 2) BLOCKS: collective DOOR/TRAPDOOR cap =====
-        else if (block.getBlockData() instanceof Door || block.getBlockData() instanceof TrapDoor)
+        else if (block.getBlockData() instanceof Door || block.getBlockData() instanceof TrapDoor || block.getBlockData() instanceof Gate)
         {
             if (main.Global.configCollectiveDoorLimit >= 0)
             {
@@ -330,45 +256,7 @@ public final class blockPlaceChecker implements Listener
                                 doorCount++;
                                 if (doorCount > main.Global.configCollectiveDoorLimit)
                                 {
-                                    if (main.Global.configToggleAlertBlockLimit)
-                                    {
-                                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                                        Component messageA = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                                .append(Component.text("■", NamedTextColor.RED))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        Component message1 = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text(playerName + " ", NamedTextColor.GOLD))
-                                                .append(Component.text("reached ", NamedTextColor.YELLOW))
-                                                .append(Component.text("Door Limit", NamedTextColor.RED))
-                                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        Component message2 = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text("Location", NamedTextColor.YELLOW))
-                                                .append(Component.text(": ", NamedTextColor.GRAY))
-                                                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                                .append(Component.text("/ ", NamedTextColor.GRAY))
-                                                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        getServer().broadcast(messageA, "chunkShield.alerts");
-                                        getServer().broadcast(message1, "chunkShield.alerts");
-                                        getServer().broadcast(message2, "chunkShield.alerts");
-                                        getServer().broadcast(messageA, "chunkShield.alerts");
-                                    }
+                                    if (main.Global.configToggleAlertBlockLimit) alertDOORLimitReached(x, y, z, playerName, world);
 
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
                                     if (player.getGameMode() != GameMode.CREATIVE)b1.breakNaturally();
@@ -383,50 +271,12 @@ public final class blockPlaceChecker implements Listener
                                     main.Global.blocksPrevented++;
                                 }
                             }
-                            else if (data instanceof TrapDoor)
+                            else if (data instanceof TrapDoor || data instanceof Gate)
                             {
                                 doorCount++;
                                 if (doorCount > main.Global.configCollectiveDoorLimit)
                                 {
-                                    if (main.Global.configToggleAlertBlockLimit)
-                                    {
-                                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                                        Component messageA = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                                .append(Component.text("■", NamedTextColor.RED))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        Component message1 = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text(playerName + " ", NamedTextColor.GOLD))
-                                                .append(Component.text("reached ", NamedTextColor.YELLOW))
-                                                .append(Component.text("Door Limit", NamedTextColor.RED))
-                                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        Component message2 = Component.text()
-                                                .append(Component.text("■ ", NamedTextColor.RED))
-                                                .append(Component.text("Location", NamedTextColor.YELLOW))
-                                                .append(Component.text(": ", NamedTextColor.GRAY))
-                                                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                                .append(Component.text("/ ", NamedTextColor.GRAY))
-                                                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                                .clickEvent(copyCoords)
-                                                .hoverEvent(hoverCoords)
-                                                .build();
-
-                                        getServer().broadcast(messageA, "chunkShield.alerts");
-                                        getServer().broadcast(message1, "chunkShield.alerts");
-                                        getServer().broadcast(message2, "chunkShield.alerts");
-                                        getServer().broadcast(messageA, "chunkShield.alerts");
-                                    }
+                                    if (main.Global.configToggleAlertBlockLimit) alertDOORLimitReached(x, y, z, playerName, world);
 
                                     if (player.hasPermission("chunkShield.blockBypass")) return;
                                     if (player.getGameMode() != GameMode.CREATIVE)b1.breakNaturally();
@@ -440,5 +290,83 @@ public final class blockPlaceChecker implements Listener
                 }
             }
         }
+    }
+
+    private static void alertBLOCKLimitReached(int x, int y, int z, String playerName, Block b, World world) {
+        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+
+        Component messageA = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
+                .append(Component.text("■", NamedTextColor.RED))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        Component message1 = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text(playerName + " ", NamedTextColor.GOLD))
+                .append(Component.text("reached ", NamedTextColor.YELLOW))
+                .append(Component.text(b.getType() + " ", NamedTextColor.RED))
+                .append(Component.text("limit.", NamedTextColor.YELLOW))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        Component message2 = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("Location", NamedTextColor.YELLOW))
+                .append(Component.text(": ", NamedTextColor.GRAY))
+                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
+                .append(Component.text("/ ", NamedTextColor.GRAY))
+                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        getServer().broadcast(messageA, "chunkShield.alerts");
+        getServer().broadcast(message1, "chunkShield.alerts");
+        getServer().broadcast(message2, "chunkShield.alerts");
+        getServer().broadcast(messageA, "chunkShield.alerts");
+    }
+
+    private static void alertDOORLimitReached(int x, int y, int z, String playerName, World world) {
+        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+
+        Component messageA = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
+                .append(Component.text("■", NamedTextColor.RED))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        Component message1 = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text(playerName + " ", NamedTextColor.GOLD))
+                .append(Component.text("reached ", NamedTextColor.YELLOW))
+                .append(Component.text("Door Limit", NamedTextColor.RED))
+                .append(Component.text(".", NamedTextColor.YELLOW))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        Component message2 = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("Location", NamedTextColor.YELLOW))
+                .append(Component.text(": ", NamedTextColor.GRAY))
+                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
+                .append(Component.text("/ ", NamedTextColor.GRAY))
+                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        getServer().broadcast(messageA, "chunkShield.alerts");
+        getServer().broadcast(message1, "chunkShield.alerts");
+        getServer().broadcast(message2, "chunkShield.alerts");
+        getServer().broadcast(messageA, "chunkShield.alerts");
     }
 }

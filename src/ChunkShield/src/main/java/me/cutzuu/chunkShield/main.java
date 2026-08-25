@@ -23,6 +23,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -117,13 +120,13 @@ public final class main extends JavaPlugin implements Listener
         public static int blocksPrevented = 0;
         public static int entitiesRemoved = 0;
         public static int vehiclesPrevented = 0;
-        public static int vehiclesRemoved = 0;
 
         public static int Chunk_unnamedCount = 0;
         public static int Chunk_namedCount = 0;
 
         public static int Entity_unnamedCount = 0;
         public static int Entity_namedCount = 0;
+        public static int Entity_vehicleCount = 0;
 
         public static boolean configToggleAlertChunkScanned;
         public static boolean configToggleAlertChunkWarning;
@@ -196,6 +199,41 @@ public final class main extends JavaPlugin implements Listener
                     Material material = Material.valueOf(key.toUpperCase());
                     int bLimit = section1.getInt(key);
                     blockLimits.put(material, bLimit);
+
+                    if (material.asItemType() instanceof Door || material.asItemType() instanceof TrapDoor || material.asItemType() instanceof Gate)
+                    {
+                        if (Global.configCollectiveVehicletLimit != -1)
+                        {
+                            getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                            getLogger().warning("■");
+                            getLogger().warning(key + " is not limited outside CollectiveDoorLimit.");
+                            getLogger().warning("CollectiveDoorLimit covers all doors/gates/trapdoors.");
+                            getLogger().warning("If this is intended, set CollectiveDoorLimit to -1 to ignore.");
+                            getLogger().warning("■");
+                            getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                        }
+                    }
+
+                    if (material == Material.REDSTONE)
+                    {
+                        getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                        getLogger().warning("■");
+                        getLogger().warning(key + " does not limit Placed REDSTONE_WIRE.");
+                        getLogger().warning("Must use: REDSTONE_WIRE");
+                        getLogger().warning("If this is intended, ignore.");
+                        getLogger().warning("■");
+                        getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                    }
+                    if (material == Material.END_PORTAL_FRAME)
+                    {
+                        getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                        getLogger().warning("■");
+                        getLogger().warning(key + " will break natural End Portals.");
+                        getLogger().warning("Enable 'end-portal-fix' in config instead.");
+                        getLogger().warning("If this is intended, ignore.");
+                        getLogger().warning("■");
+                        getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
+                    }
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -233,6 +271,8 @@ public final class main extends JavaPlugin implements Listener
     // 100% - ChunkLoadEvent
 
     /////////////////////////////////////////////////////////////////////////////
+
+    // Cords are forced into INT because the Chunk Cords in messages get long and or ugly.
     @EventHandler
     public void openInventory1(InventoryOpenEvent e)
     {
@@ -323,11 +363,11 @@ public final class main extends JavaPlugin implements Listener
     ////////////////////////////////////////////////////////////////////////////
     private void chunkCleansingCheck(World world, Chunk chunk, int x, int z, int y)
     {
+        int length = chunk.getEntities().length;
         //Stopper 1: Chunk void of entities?
-        if (chunk.getEntities().length <1) return;
+        if (length <1) return;
 
         //Stopper 2: Is entity count less than the configured minimum?
-        int length = chunk.getEntities().length;
         if (length < Global.configMinEntityLimit) return;
 
         //Stopper 3: Did the owner clear their lists?
@@ -610,7 +650,6 @@ public final class main extends JavaPlugin implements Listener
                                     + "\n§a" + Global.chunkCount + " §6Total Chunks Scanned"
                                     + "\n§a" + Global.blocksPrevented + " §eTotal Blocks Prevented"
                                     + "\n§a" + Global.entitiesRemoved + " §6Total Entities Removed"
-                                    + "\n§a" + Global.vehiclesRemoved + " §eTotal Vehicles Removed"
                                     + "\n§a" + Global.vehiclesPrevented + " §6Total Vehicles Prevented"
                                     + "\n§a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
             }

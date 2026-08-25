@@ -30,7 +30,7 @@ ChunkWarning: true
 ChunkScanned: true
 
 # 50% Toggle cuts the checks in half if you prefer.
-# The general scan when a chunk loads if it meets 6 criteria.
+# The general scan triggers when a chunk loads if it meets 6 criteria.
 Scan-Chunks-Upon-Loading: true
 Scan-Chunks-Upon-Loading-50%: false
 # Checks block limit you set every time a player places a block.
@@ -48,16 +48,16 @@ Scan-Chunk-Upon-Opening-Container: false
 # Prevent Server Lag/Crashing via checking vicinity limit for boats and mineCarts.
 VehicleRadiusCheck: true
 
-# Keep this true if you dont want players to place End Portal Frames.
-# If you add End Portal Frames to list, this can remove them.
+# READ ME
+# Adding Portal Frames to list can break portals.
 # This instead, prevents placement and removes any End Portal Frames found in the inventory.
 end-portal-fix: true
 
 ###############################
 #      Collective Checks      #
 ###############################
-# Collective Chunk Limit for all doors/trapdoors. There are 37 doors in total, including all copper doors and trapdoors.
-# Collective Chunk Limit for all mine carts/boats. There are 5 mine carts and 20 boats in total, including the recent rafts.
+# Collective Chunk Limit for all Doors | Gates | Trapdoors. There are 40+
+# Collective Chunk Limit for all Mine Carts | Boats | Rafts. There are 20+
 # -1 to disable
 ChunkDoorLimit: 40
 ChunkVehicleLimit: 20
@@ -69,9 +69,13 @@ vehicle-radius: 32
 #         Block Limits        #
 ###############################
 # The amount of block items that can be in one chunk.
-# NOTE: Doors are two entities in one so multiply your limit by 2.
-# NOTE: Bedrock Limit will NOT remove the floor or nether roof.
-# NOTE: Limiting REDSTONE placed? Must use REDSTONE_WIRE.
+
+# DO NOT ADD:
+# - Doors, read above.
+# - End Portal Frames, read above.
+
+# NOTE: Natural Bedrock is safe.
+# NOTE: Use REDSTONE_WIRE, not "REDSTONE"
 block-limits:
   ANVIL: 12
   CHIPPED_ANVIL: 12

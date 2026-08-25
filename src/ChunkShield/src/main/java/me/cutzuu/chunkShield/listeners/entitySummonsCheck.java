@@ -56,50 +56,17 @@ public final class entitySummonsCheck implements Listener
         Entity entity1 = e.getEntity();
         Chunk chunk = entity1.getLocation().getChunk();
 
+        boolean Removed;
+        boolean Named;
 
         int length = chunk.getEntities().length;
         if (length > main.Global.configMinEntityWarning && main.Global.configToggleAlertChunkWarning)
         {
-            {
-                ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+            Removed = false;
+            Named = false;
 
-                Component messageA = Component.text()
-                        .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                        .append(Component.text("■", NamedTextColor.RED))
-                        .clickEvent(copyCoords)
-                        .hoverEvent(hoverCoords)
-                        .build();
-
-                Component message1 = Component.text()
-                        .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("CHUNK WARNING", NamedTextColor.RED))
-                        .append(Component.text(": ", NamedTextColor.GRAY))
-                        .append(Component.text("Found ", NamedTextColor.YELLOW))
-                        .append(Component.text("x" + length + " ", NamedTextColor.GREEN))
-                        .append(Component.text("entities", NamedTextColor.RED))
-                        .append(Component.text(".", NamedTextColor.YELLOW))
-                        .clickEvent(copyCoords)
-                        .hoverEvent(hoverCoords)
-                        .build();
-
-                Component message2 = Component.text()
-                        .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("Location", NamedTextColor.YELLOW))
-                        .append(Component.text(": ", NamedTextColor.GRAY))
-                        .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                        .append(Component.text("/ ", NamedTextColor.GRAY))
-                        .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                        .clickEvent(copyCoords)
-                        .hoverEvent(hoverCoords)
-                        .build();
-
-                getServer().broadcast(messageA, "chunkShield.alerts");
-                getServer().broadcast(message1, "chunkShield.alerts");
-                getServer().broadcast(message2, "chunkShield.alerts");
-                getServer().broadcast(messageA, "chunkShield.alerts");
-            }
+            EntityType type = entity1.getType(); //can be ignored, just makes the method stop bitching.
+            EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
         }
 
         //Op 1: Did the owner clear their lists?
@@ -118,15 +85,14 @@ public final class entitySummonsCheck implements Listener
                     .add(entity);
         }
 
-        //Op 4: Grab for any entities that are not named.
+        //Op 3: Grab for any entities that are not named.
         // Unnamed Limits
         for (Map.Entry<EntityType, List<Entity>> entry : unnamedEntityList.entrySet())
         {
             EntityType type = entry.getKey();
             Integer noNameOBJ = main.Global.theEntityLimits.get(type);
-            if (noNameOBJ == null) continue;
-            int limit = noNameOBJ;
             List<Entity> list = entry.getValue();
+            int limit = noNameOBJ;
             if (list.size() > limit)
             {
                 int toRemove = list.size() - limit;
@@ -142,45 +108,9 @@ public final class entitySummonsCheck implements Listener
                 }
                 if (main.Global.Entity_unnamedCount != 0)
                 {
-                    if (main.Global.configToggleAlertEntityLimit)
-                    {
-                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                        Component messageA = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                .append(Component.text("■", NamedTextColor.RED))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        Component message1 = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                .append(Component.text("x" + main.Global.Entity_unnamedCount + " ", NamedTextColor.GREEN))
-                                .append(Component.text(type.name(), NamedTextColor.GOLD))
-                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        Component message2 = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Location", NamedTextColor.YELLOW))
-                                .append(Component.text(": ", NamedTextColor.GRAY))
-                                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                .append(Component.text("/ ", NamedTextColor.GRAY))
-                                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        getServer().broadcast(messageA, "chunkShield.alerts");
-                        getServer().broadcast(message1, "chunkShield.alerts");
-                        getServer().broadcast(message2, "chunkShield.alerts");
-                        getServer().broadcast(messageA, "chunkShield.alerts");
-                    }
+                    Removed = true;
+                    Named = false;
+                    if (main.Global.configToggleAlertEntityLimit) EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
                 }
             }
         }
@@ -190,9 +120,8 @@ public final class entitySummonsCheck implements Listener
         {
             EntityType type = entry.getKey();
             Integer namedOBJ = main.Global.theNamedEntityLimits.get(type);
-            if (namedOBJ == null) continue;
-            int cap = namedOBJ;
             List<Entity> list = entry.getValue();
+            int cap = namedOBJ;
             if (list.size() > cap)
             {
                 int toRemove = list.size() - cap;
@@ -209,46 +138,104 @@ public final class entitySummonsCheck implements Listener
                 {
                     if (main.Global.configToggleAlertEntityLimit)
                     {
-                        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-                        Component messageA = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                .append(Component.text("■", NamedTextColor.RED))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        Component message1 = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                .append(Component.text("x" + main.Global.Entity_namedCount + " ", NamedTextColor.GREEN))
-                                .append(Component.text("Named ", NamedTextColor.GREEN))
-                                .append(Component.text(type.name(), NamedTextColor.GOLD))
-                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        Component message2 = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Location", NamedTextColor.YELLOW))
-                                .append(Component.text(": ", NamedTextColor.GRAY))
-                                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                .append(Component.text("/ ", NamedTextColor.GRAY))
-                                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        getServer().broadcast(messageA, "chunkShield.alerts");
-                        getServer().broadcast(message1, "chunkShield.alerts");
-                        getServer().broadcast(message2, "chunkShield.alerts");
-                        getServer().broadcast(messageA, "chunkShield.alerts");
+                        Removed = true;
+                        Named = true;
+                        EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
                     }
                 }
             }
         }
+    }
+
+    private static void EntityAlertMessages(int x, int z, int y, World world, EntityType type, boolean Removed, boolean Named, int length)
+    {
+        ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
+        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+
+        Component STYLE = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
+                .append(Component.text("■", NamedTextColor.RED))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        Component subMessage = Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("Location", NamedTextColor.YELLOW))
+                .append(Component.text(": ", NamedTextColor.GRAY))
+                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
+                .append(Component.text("/ ", NamedTextColor.GRAY))
+                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+
+        if (Removed)
+        {
+            if (Named)
+            {
+                // Removed x10 Named ZOMBIE_VILLAGER.
+                Component primaryMessage = Component.text()
+                        .append(Component.text("■ ", NamedTextColor.RED))
+                        .append(Component.text("Removed ", NamedTextColor.YELLOW))
+                        .append(Component.text("x" + main.Global.Entity_namedCount + " ", NamedTextColor.GREEN))
+                        .append(Component.text("Named ", NamedTextColor.GREEN))
+                        .append(Component.text(type.name(), NamedTextColor.GOLD))
+                        .append(Component.text(".", NamedTextColor.YELLOW))
+                        .clickEvent(copyCoords)
+                        .hoverEvent(hoverCoords)
+                        .build();
+
+                getServer().broadcast(STYLE, "chunkShield.alerts");
+                getServer().broadcast(primaryMessage, "chunkShield.alerts");
+                getServer().broadcast(subMessage, "chunkShield.alerts");
+                getServer().broadcast(STYLE, "chunkShield.alerts");
+            }
+            else
+            {
+                // Removed x10 ZOMBIE_VILLAGER.
+                Component message1 = Component.text()
+                        .append(Component.text("■ ", NamedTextColor.RED))
+                        .append(Component.text("Removed ", NamedTextColor.YELLOW))
+                        .append(Component.text("x" + main.Global.Entity_unnamedCount + " ", NamedTextColor.GREEN))
+                        .append(Component.text(type.name(), NamedTextColor.GOLD))
+                        .append(Component.text(".", NamedTextColor.YELLOW))
+                        .clickEvent(copyCoords)
+                        .hoverEvent(hoverCoords)
+                        .build();
+
+                getServer().broadcast(STYLE, "chunkShield.alerts");
+                getServer().broadcast(message1, "chunkShield.alerts");
+                getServer().broadcast(subMessage, "chunkShield.alerts");
+                getServer().broadcast(STYLE, "chunkShield.alerts");
+            }
+        }
+        else
+        {
+            // CHUNK WARNING: Found x10 entities.
+            Component message1 = Component.text()
+                    .append(Component.text("■ ", NamedTextColor.RED))
+                    .append(Component.text("CHUNK WARNING", NamedTextColor.RED))
+                    .append(Component.text(": ", NamedTextColor.GRAY))
+                    .append(Component.text("Found ", NamedTextColor.YELLOW))
+                    .append(Component.text("x" + length + " ", NamedTextColor.GREEN))
+                    .append(Component.text("entities", NamedTextColor.RED))
+                    .append(Component.text(".", NamedTextColor.YELLOW))
+                    .clickEvent(copyCoords)
+                    .hoverEvent(hoverCoords)
+                    .build();
+
+            getServer().broadcast(STYLE, "chunkShield.alerts");
+            getServer().broadcast(message1, "chunkShield.alerts");
+            getServer().broadcast(subMessage, "chunkShield.alerts");
+            getServer().broadcast(STYLE, "chunkShield.alerts");
+        }
+
+
+
+
+
+
     }
 }
