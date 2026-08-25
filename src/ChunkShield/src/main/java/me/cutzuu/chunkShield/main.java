@@ -624,9 +624,13 @@ public final class main extends JavaPlugin implements Listener
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
-        if (args.length == 0)
+        if (args.length == 0 || args[0].equalsIgnoreCase("help"))
         {
-            sender.sendMessage("§eUsage: /chunkshield reload");
+            sender.sendMessage("§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■"
+                                + "\n§a■ §6ChunkShield Commands§7:" + "\n§a■"
+                                + "\n§a■ §e/chunkshield §areload"
+                                + "\n§a■ §e/chunkshield §astats"
+                                + "\n§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■");
             return true;
         }
 
@@ -645,13 +649,13 @@ public final class main extends JavaPlugin implements Listener
         {
             if (sender.hasPermission("chunkShield.info"))
             {
-                sender.sendMessage("§a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
-                                    + "\n§6ChunkShield stats since §alast restart§7:" + "\n "
-                                    + "\n§a" + Global.chunkCount + " §6Total Chunks Scanned"
-                                    + "\n§a" + Global.blocksPrevented + " §eTotal Blocks Prevented"
-                                    + "\n§a" + Global.entitiesRemoved + " §6Total Entities Removed"
-                                    + "\n§a" + Global.vehiclesPrevented + " §6Total Vehicles Prevented"
-                                    + "\n§a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+                sender.sendMessage("§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■"
+                                    + "\n§a■ §6ChunkShield Stats since §aLast Restart§7:" + "\n§a■"
+                                    + "\n§a■ §3" + Global.chunkCount + " §6Total Chunks Scanned"
+                                    + "\n§a■ §3" + Global.blocksPrevented + " §eTotal Blocks Prevented"
+                                    + "\n§a■ §3" + Global.entitiesRemoved + " §6Total Entities Prevented"
+                                    + "\n§a■ §3" + Global.vehiclesPrevented + " §eTotal Vehicles Prevented"
+                                    + "\n§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■");
             }
             else sender.sendMessage("§cYou don't have permission to do that.");
             return true;

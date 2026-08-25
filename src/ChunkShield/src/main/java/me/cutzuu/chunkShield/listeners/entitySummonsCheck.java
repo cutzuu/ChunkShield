@@ -108,9 +108,12 @@ public final class entitySummonsCheck implements Listener
                 }
                 if (main.Global.Entity_unnamedCount != 0)
                 {
-                    Removed = true;
-                    Named = false;
-                    if (main.Global.configToggleAlertEntityLimit) EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
+                    if (type != EntityType.FALLING_BLOCK)
+                    {
+                        Removed = true;
+                        Named = false;
+                        if (main.Global.configToggleAlertEntityLimit) EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
+                    }
                 }
             }
         }
