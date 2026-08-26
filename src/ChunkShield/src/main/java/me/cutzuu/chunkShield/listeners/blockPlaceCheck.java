@@ -1,6 +1,7 @@
 package me.cutzuu.chunkShield.listeners;
 
 import me.cutzuu.chunkShield.main;
+import me.cutzuu.chunkShield.messages_EN_US;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -24,10 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import static org.bukkit.Bukkit.getServer;
 
 
-public final class blockPlaceChecker implements Listener
+public final class blockPlaceCheck implements Listener
 {
     public static class Global
     {
@@ -296,15 +296,7 @@ public final class blockPlaceChecker implements Listener
         ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-        Component messageA = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                .append(Component.text("■", NamedTextColor.RED))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
-        Component message1 = Component.text()
+        Component primaryMessage = Component.text()
                 .append(Component.text("■ ", NamedTextColor.RED))
                 .append(Component.text(playerName + " ", NamedTextColor.GOLD))
                 .append(Component.text("reached ", NamedTextColor.YELLOW))
@@ -314,36 +306,14 @@ public final class blockPlaceChecker implements Listener
                 .hoverEvent(hoverCoords)
                 .build();
 
-        Component message2 = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("Location", NamedTextColor.YELLOW))
-                .append(Component.text(": ", NamedTextColor.GRAY))
-                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                .append(Component.text("/ ", NamedTextColor.GRAY))
-                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
-        getServer().broadcast(messageA, "chunkShield.alerts");
-        getServer().broadcast(message1, "chunkShield.alerts");
-        getServer().broadcast(message2, "chunkShield.alerts");
-        getServer().broadcast(messageA, "chunkShield.alerts");
+        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
     }
 
     private static void alertDOORLimitReached(int x, int y, int z, String playerName, World world) {
         ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-        Component messageA = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                .append(Component.text("■", NamedTextColor.RED))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
-        Component message1 = Component.text()
+        Component primaryMessage = Component.text()
                 .append(Component.text("■ ", NamedTextColor.RED))
                 .append(Component.text(playerName + " ", NamedTextColor.GOLD))
                 .append(Component.text("reached ", NamedTextColor.YELLOW))
@@ -353,20 +323,6 @@ public final class blockPlaceChecker implements Listener
                 .hoverEvent(hoverCoords)
                 .build();
 
-        Component message2 = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("Location", NamedTextColor.YELLOW))
-                .append(Component.text(": ", NamedTextColor.GRAY))
-                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                .append(Component.text("/ ", NamedTextColor.GRAY))
-                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
-        getServer().broadcast(messageA, "chunkShield.alerts");
-        getServer().broadcast(message1, "chunkShield.alerts");
-        getServer().broadcast(message2, "chunkShield.alerts");
-        getServer().broadcast(messageA, "chunkShield.alerts");
+        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
     }
 }

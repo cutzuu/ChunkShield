@@ -1,6 +1,7 @@
 package me.cutzuu.chunkShield.listeners;
 
 import me.cutzuu.chunkShield.main;
+import me.cutzuu.chunkShield.messages_EN_US;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -92,25 +93,6 @@ public final class vehicleSummonsCheck implements Listener
                     ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                     HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                    Component STYLE = Component.text()
-                            .append(Component.text("■ ", NamedTextColor.RED))
-                            .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                            .append(Component.text("■", NamedTextColor.RED))
-                            .clickEvent(copyCoords)
-                            .hoverEvent(hoverCoords)
-                            .build();
-
-                    Component subMessage = Component.text()
-                            .append(Component.text("■ ", NamedTextColor.RED))
-                            .append(Component.text("Location", NamedTextColor.YELLOW))
-                            .append(Component.text(": ", NamedTextColor.GRAY))
-                            .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                            .append(Component.text("/ ", NamedTextColor.GRAY))
-                            .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                            .clickEvent(copyCoords)
-                            .hoverEvent(hoverCoords)
-                            .build();
-
                     if (main.Global.Entity_vehicleCount > 1)
                     {
                         Component primaryMessage = Component.text()
@@ -123,10 +105,7 @@ public final class vehicleSummonsCheck implements Listener
                                 .hoverEvent(hoverCoords)
                                 .build();
 
-                        getServer().broadcast(STYLE, "chunkShield.alerts");
-                        getServer().broadcast(primaryMessage, "chunkShield.alerts");
-                        getServer().broadcast(subMessage, "chunkShield.alerts");
-                        getServer().broadcast(STYLE, "chunkShield.alerts");
+                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                     else
                     {
@@ -140,10 +119,7 @@ public final class vehicleSummonsCheck implements Listener
                                 .hoverEvent(hoverCoords)
                                 .build();
 
-                        getServer().broadcast(STYLE, "chunkShield.alerts");
-                        getServer().broadcast(primaryMessage, "chunkShield.alerts");
-                        getServer().broadcast(subMessage, "chunkShield.alerts");
-                        getServer().broadcast(STYLE, "chunkShield.alerts");
+                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                 }
             }

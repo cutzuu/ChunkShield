@@ -1,6 +1,7 @@
 package me.cutzuu.chunkShield.listeners;
 
 import me.cutzuu.chunkShield.main;
+import me.cutzuu.chunkShield.messages_EN_US;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -49,6 +50,9 @@ public final class entitySummonsCheck implements Listener
     /////////////////////////////////////////////////////////////////////////////
     private static void entityCheck(EntitySpawnEvent e, int x, int z, int y, World world)
     {
+        int entitySummonNamedCount = 0;
+        int entitySummonUnNamedCount = 0;
+
         // ===== ENTITIES ===== //
         Map<EntityType, List<Entity>> namedEntityList   = new HashMap<>();
         Map<EntityType, List<Entity>> unnamedEntityList = new HashMap<>();
@@ -66,7 +70,7 @@ public final class entitySummonsCheck implements Listener
             Named = false;
 
             EntityType type = entity1.getType(); //can be ignored, just makes the method stop bitching.
-            EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
+            EntityAlertMessages(x, z, y, world, type, Removed, Named, length, entitySummonNamedCount, entitySummonUnNamedCount);
         }
 
         //Op 1: Did the owner clear their lists?
@@ -96,23 +100,23 @@ public final class entitySummonsCheck implements Listener
             if (list.size() > limit)
             {
                 int toRemove = list.size() - limit;
-                for (main.Global.Entity_unnamedCount = 0; main.Global.Entity_unnamedCount < toRemove; main.Global.Entity_unnamedCount++)
+                for (entitySummonUnNamedCount = 0; entitySummonUnNamedCount < toRemove; entitySummonUnNamedCount++)
                 {
-                    list.get(main.Global.Entity_unnamedCount).remove();
-                    list.get(main.Global.Entity_unnamedCount).getLocation();
-                    if (main.Global.Entity_unnamedCount < 10)
+                    list.get(entitySummonUnNamedCount).remove();
+                    list.get(entitySummonUnNamedCount).getLocation();
+                    if (entitySummonUnNamedCount < 10)
                     {
-                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(main.Global.Entity_unnamedCount).getLocation().toCenterLocation(), 4);
+                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(entitySummonUnNamedCount).getLocation().toCenterLocation(), 4);
                     }
                     main.Global.entitiesRemoved++;
                 }
-                if (main.Global.Entity_unnamedCount != 0)
+                if (entitySummonUnNamedCount != 0)
                 {
                     if (type != EntityType.FALLING_BLOCK)
                     {
                         Removed = true;
                         Named = false;
-                        if (main.Global.configToggleAlertEntityLimit) EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
+                        if (main.Global.configToggleAlertEntityLimit) EntityAlertMessages(x, z, y, world, type, Removed, Named, length, entitySummonNamedCount, entitySummonUnNamedCount);
                     }
                 }
             }
@@ -128,52 +132,32 @@ public final class entitySummonsCheck implements Listener
             if (list.size() > cap)
             {
                 int toRemove = list.size() - cap;
-                for (main.Global.Entity_namedCount = 0; main.Global.Entity_namedCount < toRemove; main.Global.Entity_namedCount++)
+                for (entitySummonNamedCount = 0; entitySummonNamedCount < toRemove; entitySummonNamedCount++)
                 {
-                    list.get(main.Global.Entity_namedCount).remove();
-                    if (main.Global.Entity_namedCount < 10)
+                    list.get(entitySummonNamedCount).remove();
+                    if (entitySummonNamedCount < 10)
                     {
-                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(main.Global.Entity_unnamedCount).getLocation().toCenterLocation(), 4);
+                        if(main.Global.configTogglePurgeEffect) world.spawnParticle(Particle.LAVA, list.get(entitySummonNamedCount).getLocation().toCenterLocation(), 4);
                     }
                     main.Global.entitiesRemoved++;
                 }
-                if (main.Global.Entity_namedCount != 0)
+                if (entitySummonNamedCount != 0)
                 {
                     if (main.Global.configToggleAlertEntityLimit)
                     {
                         Removed = true;
                         Named = true;
-                        EntityAlertMessages(x, z, y, world, type, Removed, Named, length);
+                        EntityAlertMessages(x, z, y, world, type, Removed, Named, length, entitySummonNamedCount, entitySummonUnNamedCount);
                     }
                 }
             }
         }
     }
 
-    private static void EntityAlertMessages(int x, int z, int y, World world, EntityType type, boolean Removed, boolean Named, int length)
+    private static void EntityAlertMessages(int x, int z, int y, World world, EntityType type, boolean Removed, boolean Named, int length, int entitySummonNamedCount, int entitySummonUnNamedCount)
     {
         ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
-
-        Component STYLE = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                .append(Component.text("■", NamedTextColor.RED))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
-        Component subMessage = Component.text()
-                .append(Component.text("■ ", NamedTextColor.RED))
-                .append(Component.text("Location", NamedTextColor.YELLOW))
-                .append(Component.text(": ", NamedTextColor.GRAY))
-                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                .append(Component.text("/ ", NamedTextColor.GRAY))
-                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                .clickEvent(copyCoords)
-                .hoverEvent(hoverCoords)
-                .build();
-
         if (Removed)
         {
             if (Named)
@@ -182,7 +166,7 @@ public final class entitySummonsCheck implements Listener
                 Component primaryMessage = Component.text()
                         .append(Component.text("■ ", NamedTextColor.RED))
                         .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                        .append(Component.text("x" + main.Global.Entity_namedCount + " ", NamedTextColor.GREEN))
+                        .append(Component.text("x" + entitySummonNamedCount + " ", NamedTextColor.GREEN))
                         .append(Component.text("Named ", NamedTextColor.GREEN))
                         .append(Component.text(type.name(), NamedTextColor.GOLD))
                         .append(Component.text(".", NamedTextColor.YELLOW))
@@ -190,34 +174,30 @@ public final class entitySummonsCheck implements Listener
                         .hoverEvent(hoverCoords)
                         .build();
 
-                getServer().broadcast(STYLE, "chunkShield.alerts");
-                getServer().broadcast(primaryMessage, "chunkShield.alerts");
-                getServer().broadcast(subMessage, "chunkShield.alerts");
-                getServer().broadcast(STYLE, "chunkShield.alerts");
+                messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+
+
             }
             else
             {
                 // Removed x10 ZOMBIE_VILLAGER.
-                Component message1 = Component.text()
+                Component primaryMessage = Component.text()
                         .append(Component.text("■ ", NamedTextColor.RED))
                         .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                        .append(Component.text("x" + main.Global.Entity_unnamedCount + " ", NamedTextColor.GREEN))
+                        .append(Component.text("x" + entitySummonUnNamedCount + " ", NamedTextColor.GREEN))
                         .append(Component.text(type.name(), NamedTextColor.GOLD))
                         .append(Component.text(".", NamedTextColor.YELLOW))
                         .clickEvent(copyCoords)
                         .hoverEvent(hoverCoords)
                         .build();
 
-                getServer().broadcast(STYLE, "chunkShield.alerts");
-                getServer().broadcast(message1, "chunkShield.alerts");
-                getServer().broadcast(subMessage, "chunkShield.alerts");
-                getServer().broadcast(STYLE, "chunkShield.alerts");
+                messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
             }
         }
         else
         {
             // CHUNK WARNING: Found x10 entities.
-            Component message1 = Component.text()
+            Component primaryMessage = Component.text()
                     .append(Component.text("■ ", NamedTextColor.RED))
                     .append(Component.text("CHUNK WARNING", NamedTextColor.RED))
                     .append(Component.text(": ", NamedTextColor.GRAY))
@@ -229,16 +209,9 @@ public final class entitySummonsCheck implements Listener
                     .hoverEvent(hoverCoords)
                     .build();
 
-            getServer().broadcast(STYLE, "chunkShield.alerts");
-            getServer().broadcast(message1, "chunkShield.alerts");
-            getServer().broadcast(subMessage, "chunkShield.alerts");
-            getServer().broadcast(STYLE, "chunkShield.alerts");
+            messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
         }
-
-
-
-
-
-
     }
+
+
 }
