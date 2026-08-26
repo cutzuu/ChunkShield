@@ -12,7 +12,7 @@
 
 
 package me.cutzuu.chunkShield;
-import me.cutzuu.chunkShield.listeners.blockPlaceChecker;
+import me.cutzuu.chunkShield.listeners.blockPlaceCheck;
 import me.cutzuu.chunkShield.listeners.entitySummonsCheck;
 import me.cutzuu.chunkShield.listeners.vehicleSummonsCheck;
 
@@ -55,7 +55,7 @@ public final class main extends JavaPlugin implements Listener
     public void onEnable()
     {
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new blockPlaceChecker(), this);
+        getServer().getPluginManager().registerEvents(new blockPlaceCheck(), this);
         getServer().getPluginManager().registerEvents(new entitySummonsCheck(), this);
         getServer().getPluginManager().registerEvents(new vehicleSummonsCheck(), this);
 
@@ -121,11 +121,6 @@ public final class main extends JavaPlugin implements Listener
         public static int entitiesRemoved = 0;
         public static int vehiclesPrevented = 0;
 
-        public static int Chunk_unnamedCount = 0;
-        public static int Chunk_namedCount = 0;
-
-        public static int Entity_unnamedCount = 0;
-        public static int Entity_namedCount = 0;
         public static int Entity_vehicleCount = 0;
 
         public static boolean configToggleAlertChunkScanned;
@@ -206,7 +201,7 @@ public final class main extends JavaPlugin implements Listener
                         {
                             getLogger().warning("!!! --- CONFIG ERROR --- !!!  ");
                             getLogger().warning("■");
-                            getLogger().warning(key + " is not limited outside CollectiveDoorLimit.");
+                            getLogger().warning(key + " is already covered by CollectiveDoorLimit.");
                             getLogger().warning("CollectiveDoorLimit covers all doors/gates/trapdoors.");
                             getLogger().warning("If this is intended, set CollectiveDoorLimit to -1 to ignore.");
                             getLogger().warning("■");
@@ -363,6 +358,9 @@ public final class main extends JavaPlugin implements Listener
     ////////////////////////////////////////////////////////////////////////////
     private void chunkCleansingCheck(World world, Chunk chunk, int x, int z, int y)
     {
+        int chunkLoadNamedCount = 0;
+        int chunkLoadUnNamedCount = 0;
+
         int length = chunk.getEntities().length;
         //Stopper 1: Chunk void of entities?
         if (length <1) return;
@@ -406,12 +404,12 @@ public final class main extends JavaPlugin implements Listener
             {
                 int toRemove = list.size() - limit;
                 Collections.shuffle(list); // optional fairness
-                for (Global.Chunk_unnamedCount = 0; Global.Chunk_unnamedCount < toRemove; Global.Chunk_unnamedCount++)
+                for (chunkLoadUnNamedCount = 0; chunkLoadUnNamedCount < toRemove; chunkLoadUnNamedCount++)
                 {
-                    list.get(Global.Chunk_unnamedCount).remove();
+                    list.get(chunkLoadUnNamedCount).remove();
                 }
 
-                if (main.Global.Chunk_unnamedCount != 0)
+                if (chunkLoadUnNamedCount != 0)
                 {
                     if (main.Global.configToggleAlertEntityLimit)
                     {
@@ -420,39 +418,17 @@ public final class main extends JavaPlugin implements Listener
                             ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                             HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                            Component messageA = Component.text()
-                                    .append(Component.text("■ ", NamedTextColor.RED))
-                                    .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                    .append(Component.text("■", NamedTextColor.RED))
-                                    .clickEvent(copyCoords)
-                                    .hoverEvent(hoverCoords)
-                                    .build();
-
-                            Component message1 = Component.text()
+                            Component primaryMessage = Component.text()
                                     .append(Component.text("■ ", NamedTextColor.RED))
                                     .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                    .append(Component.text("x" + main.Global.Chunk_unnamedCount + " ", NamedTextColor.GREEN))
+                                    .append(Component.text("x" + chunkLoadUnNamedCount + " ", NamedTextColor.GREEN))
                                     .append(Component.text(type.name(), NamedTextColor.GOLD))
                                     .append(Component.text(".", NamedTextColor.YELLOW))
                                     .clickEvent(copyCoords)
                                     .hoverEvent(hoverCoords)
                                     .build();
 
-                            Component message2 = Component.text()
-                                    .append(Component.text("■ ", NamedTextColor.RED))
-                                    .append(Component.text("Location", NamedTextColor.YELLOW))
-                                    .append(Component.text(": ", NamedTextColor.GRAY))
-                                    .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                    .append(Component.text("/ ", NamedTextColor.GRAY))
-                                    .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                    .clickEvent(copyCoords)
-                                    .hoverEvent(hoverCoords)
-                                    .build();
-
-                            getServer().broadcast(messageA, "chunkShield.alerts");
-                            getServer().broadcast(message1, "chunkShield.alerts");
-                            getServer().broadcast(message2, "chunkShield.alerts");
-                            getServer().broadcast(messageA, "chunkShield.alerts");
+                            messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                         }
                     }
                 }
@@ -471,30 +447,22 @@ public final class main extends JavaPlugin implements Listener
             {
                 int toRemove = list.size() - cap;
                 Collections.shuffle(list);
-                for (Global.Chunk_namedCount = 0; Global.Chunk_namedCount < toRemove; Global.Chunk_namedCount++)
+                for (chunkLoadNamedCount = 0; chunkLoadNamedCount < toRemove; chunkLoadNamedCount++)
                 {
-                    list.get(Global.Chunk_namedCount).remove();
+                    list.get(chunkLoadNamedCount).remove();
                 }
 
-                if (Global.Chunk_namedCount != 0)
+                if (chunkLoadNamedCount != 0)
                 {
                     if (Global.configToggleAlertEntityLimit)
                     {
                         ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                         HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                        Component messageA = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                                .append(Component.text("■", NamedTextColor.RED))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        Component message1 = Component.text()
+                        Component primaryMessage = Component.text()
                                 .append(Component.text("■ ", NamedTextColor.RED))
                                 .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                .append(Component.text("x" + Global.Chunk_namedCount + " ", NamedTextColor.GREEN))
+                                .append(Component.text("x" + chunkLoadNamedCount + " ", NamedTextColor.GREEN))
                                 .append(Component.text("Named ", NamedTextColor.GOLD))
                                 .append(Component.text(type.name(), NamedTextColor.GOLD))
                                 .append(Component.text(".", NamedTextColor.YELLOW))
@@ -502,27 +470,13 @@ public final class main extends JavaPlugin implements Listener
                                 .hoverEvent(hoverCoords)
                                 .build();
 
-                        Component message2 = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Location", NamedTextColor.YELLOW))
-                                .append(Component.text(": ", NamedTextColor.GRAY))
-                                .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                                .append(Component.text("/ ", NamedTextColor.GRAY))
-                                .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        getServer().broadcast(messageA, "chunkShield.alerts");
-                        getServer().broadcast(message1, "chunkShield.alerts");
-                        getServer().broadcast(message2, "chunkShield.alerts");
-                        getServer().broadcast(messageA, "chunkShield.alerts");
+                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                 }
             }
         }
 
-        int totality = Global.Chunk_namedCount + Global.Chunk_unnamedCount;
+        int totality = chunkLoadNamedCount + chunkLoadUnNamedCount;
 
         // Totality tallies all removed listed entities.
         // If there are still a bunch of unlisted entities that surpass the warning level.
@@ -536,15 +490,7 @@ public final class main extends JavaPlugin implements Listener
                     ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                     HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                    Component messageA = Component.text()
-                            .append(Component.text("■ ", NamedTextColor.RED))
-                            .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                            .append(Component.text("■", NamedTextColor.RED))
-                            .clickEvent(copyCoords)
-                            .hoverEvent(hoverCoords)
-                            .build();
-
-                    Component message1 = Component.text()
+                    Component primaryMessage = Component.text()
                             .append(Component.text("■ ", NamedTextColor.RED))
                             .append(Component.text("CHUNK WARNING", NamedTextColor.RED))
                             .append(Component.text(": ", NamedTextColor.GRAY))
@@ -556,21 +502,7 @@ public final class main extends JavaPlugin implements Listener
                             .hoverEvent(hoverCoords)
                             .build();
 
-                    Component message2 = Component.text()
-                            .append(Component.text("■ ", NamedTextColor.RED))
-                            .append(Component.text("Location", NamedTextColor.YELLOW))
-                            .append(Component.text(": ", NamedTextColor.GRAY))
-                            .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                            .append(Component.text("/ ", NamedTextColor.GRAY))
-                            .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                            .clickEvent(copyCoords)
-                            .hoverEvent(hoverCoords)
-                            .build();
-
-                    getServer().broadcast(messageA, "chunkShield.alerts");
-                    getServer().broadcast(message1, "chunkShield.alerts");
-                    getServer().broadcast(message2, "chunkShield.alerts");
-                    getServer().broadcast(messageA, "chunkShield.alerts");
+                    messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                 }
             }
         }
@@ -581,19 +513,11 @@ public final class main extends JavaPlugin implements Listener
                 ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
                 HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                Component messageA = Component.text()
-                        .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("- - - - - - - - - - - - - - - - - - - - - - - - - ", NamedTextColor.GRAY))
-                        .append(Component.text("■", NamedTextColor.RED))
-                        .clickEvent(copyCoords)
-                        .hoverEvent(hoverCoords)
-                        .build();
-
-                Component message1 = Component.text()
+                Component primaryMessage = Component.text()
                         .append(Component.text("■ ", NamedTextColor.RED))
                         .append(Component.text("A Loaded Chunk met ", NamedTextColor.RED))
                         .append(Component.text("6 conditions ", NamedTextColor.GOLD))
-                        .append(Component.text("and removed ", NamedTextColor.RED))
+                        .append(Component.text("& removed ", NamedTextColor.RED))
                         .append(Component.text("x" + totality + " ", NamedTextColor.GREEN))
                         .append(Component.text("entities", NamedTextColor.RED))
                         .append(Component.text(".", NamedTextColor.YELLOW))
@@ -601,21 +525,7 @@ public final class main extends JavaPlugin implements Listener
                         .hoverEvent(hoverCoords)
                         .build();
 
-                Component message2 = Component.text()
-                        .append(Component.text("■ ", NamedTextColor.RED))
-                        .append(Component.text("Location", NamedTextColor.YELLOW))
-                        .append(Component.text(": ", NamedTextColor.GRAY))
-                        .append(Component.text(world.getName() + " ", NamedTextColor.GOLD))
-                        .append(Component.text("/ ", NamedTextColor.GRAY))
-                        .append(Component.text("[" + x + ", " + y + ", " + z + "]", NamedTextColor.GREEN))
-                        .clickEvent(copyCoords)
-                        .hoverEvent(hoverCoords)
-                        .build();
-
-                getServer().broadcast(messageA, "chunkShield.alerts");
-                getServer().broadcast(message1, "chunkShield.alerts");
-                getServer().broadcast(message2, "chunkShield.alerts");
-                getServer().broadcast(messageA, "chunkShield.alerts");
+                messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
             }
         }
     }
