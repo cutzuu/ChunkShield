@@ -1,7 +1,9 @@
 package me.cutzuu.chunkShield.listeners;
 
+import me.cutzuu.chunkShield.languages.ES;
+import me.cutzuu.chunkShield.languages.RU;
 import me.cutzuu.chunkShield.main;
-import me.cutzuu.chunkShield.messages_EN_US;
+import me.cutzuu.chunkShield.languages.EN;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -13,8 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-
-import static org.bukkit.Bukkit.getServer;
 
 public final class vehicleSummonsCheck implements Listener
 {
@@ -91,38 +91,32 @@ public final class vehicleSummonsCheck implements Listener
                 if (main.Global.configToggleAlertVehicleLimit)
                 {
                     ClickEvent<ClickEvent.Payload.Text> copyCoords = ClickEvent.copyToClipboard(x + " " + y + " " + z);
-                    HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
 
-                    if (main.Global.Entity_vehicleCount > 1)
+                    // English Message Workflow
+                    if(main.Global.configLanguageType == 1)
                     {
-                        Component primaryMessage = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                .append(Component.text("x" + main.Global.Entity_vehicleCount + " ", NamedTextColor.GREEN))
-                                .append(Component.text("Vehicles", NamedTextColor.GOLD))
-                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+                        Component primaryMessage = EN.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
+                        EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
-                    else
+                    // Spanish Message Workflow
+                    else if(main.Global.configLanguageType == 2)
                     {
-                        Component primaryMessage = Component.text()
-                                .append(Component.text("■ ", NamedTextColor.RED))
-                                .append(Component.text("Removed ", NamedTextColor.YELLOW))
-                                .append(Component.text("x" + main.Global.Entity_vehicleCount + " ", NamedTextColor.GREEN))
-                                .append(Component.text("Vehicle", NamedTextColor.GOLD))
-                                .append(Component.text(".", NamedTextColor.YELLOW))
-                                .clickEvent(copyCoords)
-                                .hoverEvent(hoverCoords)
-                                .build();
-
-                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Haga clic para copiar coordenadas.", NamedTextColor.GREEN));
+                        Component primaryMessage = ES.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
+                        ES.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                    }
+                    // Russian Message Workflow
+                    else if(main.Global.configLanguageType == 3)
+                    {
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Нажмите, чтобы скопировать координаты.", NamedTextColor.GREEN));
+                        Component primaryMessage = RU.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
+                        RU.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                 }
             }
         }
     }
+
+
 }
