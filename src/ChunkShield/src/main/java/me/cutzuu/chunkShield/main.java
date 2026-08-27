@@ -12,6 +12,7 @@
 
 
 package me.cutzuu.chunkShield;
+import me.cutzuu.chunkShield.languages.EN;
 import me.cutzuu.chunkShield.listeners.blockPlaceCheck;
 import me.cutzuu.chunkShield.listeners.entitySummonsCheck;
 import me.cutzuu.chunkShield.listeners.vehicleSummonsCheck;
@@ -88,6 +89,9 @@ public final class main extends JavaPlugin implements Listener
         Global.configToggleAlertEntityLimit = this.getConfig().getBoolean("EntityLimits");
         Global.configToggleAlertVehicleLimit = this.getConfig().getBoolean("VehicleLimits");
 
+        Global.configTogglePurgeEffect = this.getConfig().getBoolean("PurgeEffects");
+        Global.configLanguageType = this.getConfig().getInt("lang");
+
     }
     ////////////////////////////////////////////////////////////////////////////
     public static class Global
@@ -130,6 +134,7 @@ public final class main extends JavaPlugin implements Listener
         public static boolean configToggleAlertVehicleLimit;
 
         public static boolean configTogglePurgeEffect;
+        public static int configLanguageType;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -164,6 +169,7 @@ public final class main extends JavaPlugin implements Listener
         Global.configToggleAlertVehicleLimit = this.getConfig().getBoolean("VehicleLimits");
 
         Global.configTogglePurgeEffect = this.getConfig().getBoolean("PurgeEffects");
+        Global.configLanguageType = this.getConfig().getInt("lang");
 
         ConfigurationSection section0 = config.getConfigurationSection("entity-limits");
         if (section0 != null)
@@ -428,7 +434,7 @@ public final class main extends JavaPlugin implements Listener
                                     .hoverEvent(hoverCoords)
                                     .build();
 
-                            messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                            EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                         }
                     }
                 }
@@ -470,7 +476,7 @@ public final class main extends JavaPlugin implements Listener
                                 .hoverEvent(hoverCoords)
                                 .build();
 
-                        messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                        EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                 }
             }
@@ -502,7 +508,7 @@ public final class main extends JavaPlugin implements Listener
                             .hoverEvent(hoverCoords)
                             .build();
 
-                    messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                    EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                 }
             }
         }
@@ -525,7 +531,7 @@ public final class main extends JavaPlugin implements Listener
                         .hoverEvent(hoverCoords)
                         .build();
 
-                messages_EN_US.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
+                EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
             }
         }
     }
