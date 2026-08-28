@@ -6,7 +6,7 @@
 
     <groupId>me.sintaxlabs</groupId>
     <artifactId>ChunkShield</artifactId>
-    <version>1.0.10</version>
+    <version>1f6841a6</version>
     <packaging>jar</packaging>
 
     <name>ChunkShield</name>

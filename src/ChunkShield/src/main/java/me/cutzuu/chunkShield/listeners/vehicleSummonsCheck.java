@@ -95,21 +95,21 @@ public final class vehicleSummonsCheck implements Listener
                     // English Message Workflow
                     if(main.Global.configLanguageType == 1)
                     {
-                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Click to copy coordinates.", NamedTextColor.GREEN));
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text(EN.ClickCopy, NamedTextColor.GREEN));
                         Component primaryMessage = EN.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
                         EN.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                     // Spanish Message Workflow
                     else if(main.Global.configLanguageType == 2)
                     {
-                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Haga clic para copiar coordenadas.", NamedTextColor.GREEN));
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text(ES.ClickCopy, NamedTextColor.GREEN));
                         Component primaryMessage = ES.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
                         ES.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }
                     // Russian Message Workflow
                     else if(main.Global.configLanguageType == 3)
                     {
-                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text("Нажмите, чтобы скопировать координаты.", NamedTextColor.GREEN));
+                        HoverEvent<?> hoverCoords = HoverEvent.showText(Component.text(RU.ClickCopy, NamedTextColor.GREEN));
                         Component primaryMessage = RU.vehicleSummonsCheck_alertVehicleLimit(copyCoords, hoverCoords);
                         RU.sendMessageMethod(world, x, z, y, copyCoords, hoverCoords, primaryMessage);
                     }

@@ -7,13 +7,18 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.jspecify.annotations.NonNull;
 
+import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Bukkit.getServer;
 
 public class EN
 {
+    //Click to copy coordinates.
+    public static String ClickCopy = "Click to copy coordinates.";
+
     // Primary Method to send out message.
     public static void sendMessageMethod(World world, int x, int z, int y, ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords, Component primaryMessage)
     {
@@ -46,6 +51,7 @@ public class EN
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static @NonNull Component blockPlaceCheck_alertBlockLimitReached(String playerName, Block b, ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords)
     {
+        // Player reached STONE limit.
         return Component.text()
                 .append(Component.text("■ ", NamedTextColor.RED))
                 .append(Component.text(playerName + " ", NamedTextColor.GOLD))
@@ -59,6 +65,7 @@ public class EN
 
     public static @NonNull Component blockPlaceCheck_alertDoorLimitReached(String playerName, ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords)
     {
+        // Player reached DOOR limit.
         return Component.text()
                 .append(Component.text("■ ", NamedTextColor.RED))
                 .append(Component.text(playerName + " ", NamedTextColor.GOLD))
@@ -119,10 +126,10 @@ public class EN
     }
 
 
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// vehicleSummonsCheck Class Messages.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removed x10 Vehicle(s).
     public static @NonNull Component vehicleSummonsCheck_alertVehicleLimit(ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords)
     {
         return Component.text()
@@ -137,8 +144,42 @@ public class EN
     }
 
 
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// main Class Messages.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Invalid entity type in config:
+    public static void main_ConsoleInvalidConfigEntity(String key)
+    {
+        getLogger().warning("Invalid entity type in config: " + key);
+    }
+    // Invalid entity type in named-entity-limits:
+    public static void main_ConsoleInvalidConfigNamedEntity(String key)
+    {
+        getLogger().warning("Invalid entity type in named-entity-limits: " + key);
+    }
+    // Invalid block type in config:
+    public static void main_ConsoleInvalidConfigBlock(String key)
+    {
+        getLogger().warning("Invalid block type in config: " + key);
+    }
+    // Invalid Action. No Permission.
+    public static void main_NoPermission(CommandSender sender)
+    {
+        sender.sendMessage("§cInvalid Action. No Permission.");
+    }
+    // A Loaded Chunk met 6 conditions and removed x10 entities.
+    public static @NonNull Component main_AlertChunkScanRemovalSuccess(int totality, ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords)
+    {
+        return Component.text()
+                .append(Component.text("■ ", NamedTextColor.RED))
+                .append(Component.text("A Loaded Chunk met ", NamedTextColor.RED))
+                .append(Component.text("6 conditions ", NamedTextColor.GOLD))
+                .append(Component.text("& removed ", NamedTextColor.RED))
+                .append(Component.text("x" + totality + " ", NamedTextColor.GREEN))
+                .append(Component.text("entities", NamedTextColor.RED))
+                .append(Component.text(".", NamedTextColor.YELLOW))
+                .clickEvent(copyCoords)
+                .hoverEvent(hoverCoords)
+                .build();
+    }
 }
