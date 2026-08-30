@@ -2,7 +2,7 @@
 > Chunk Protection that limits mobs, named mobs, blocks, entities of your choice.
 
 Drop a ⭐ to support and stay up to date!
-- Consider [donating!](https://ko-fi.com/cutzuu)
+- Consider [donating!](https://ko-fi.com/mikebloc)
 - Download [here!](https://modrinth.com/plugin/chunkshield)
 
 ## Features
