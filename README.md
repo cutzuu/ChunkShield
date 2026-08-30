@@ -29,10 +29,4 @@ A lot of server owners are brushed away from needing additional security and are
 
 So I aim to provide server owners with the plugin I always wanted.
 
-## Copyright
-### Copyright (c) 2026 Cutzuu. All rights reserved except where explicitly granted.
-
-For permissions, inquiries, or notices, contact the Copyright Holder at: 
-- x.com/cutzuuYT
-
-Full Copyright details and EULA can be found [here.](https://github.com/cutzuu/.github/tree/main/documentation)
+[All rights reserved. Mike Bloc](https://github.com/cutzuu/.github/tree/main/documentation)
