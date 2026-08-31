@@ -29,4 +29,4 @@ A lot of server owners are brushed away from needing additional security and are
 
 So I aim to provide server owners with the plugin I always wanted.
 
-[All rights reserved. Mike Bloc](https://github.com/mikebloc/.github/tree/main/documentation)
+[All rights reserved. Mike Bloc](https://github.com/mikebloc/.github/tree/main/documentation/legal.md)
