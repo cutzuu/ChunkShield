@@ -51,6 +51,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class main extends JavaPlugin implements Listener
 {
 
+
     private final Map<EntityType, Integer> entityLimits = new HashMap<>();
     private final Map<Material, Integer> blockLimits = new HashMap<>();
     private final Map<EntityType, Integer> namedEntityLimits = new HashMap<>();
@@ -275,8 +276,6 @@ public final class main extends JavaPlugin implements Listener
             Global.theNamedEntityLimits = namedEntityLimits;
         }
     }
-
-
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -600,7 +599,10 @@ public final class main extends JavaPlugin implements Listener
             {
                 reloadConfig();
                 loadLimitsFromConfig();
-                sender.sendMessage("§7[§6ChunkShield§7] §aConfig reloaded.");
+                // TRANSLATE: §7[§6ChunkShield§7] §aConfig reloaded.
+                if (Global.configLanguageType == 1) EN.main_ConfigReloaded(sender);
+                else if (Global.configLanguageType == 2) ES.main_ConfigReloaded(sender);
+                else if (Global.configLanguageType == 3) RU.main_ConfigReloaded(sender);
             }
             else
             {
@@ -615,13 +617,10 @@ public final class main extends JavaPlugin implements Listener
         {
             if (sender.hasPermission("chunkShield.info"))
             {
-                sender.sendMessage("§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■"
-                                    + "\n§a■ §6ChunkShield Stats since §aLast Restart§7:" + "\n§a■"
-                                    + "\n§a■ §3" + Global.chunkCount + " §6Total Chunks Scanned"
-                                    + "\n§a■ §3" + Global.blocksPrevented + " §eTotal Blocks Prevented"
-                                    + "\n§a■ §3" + Global.entitiesRemoved + " §6Total Entities Prevented"
-                                    + "\n§a■ §3" + Global.vehiclesPrevented + " §eTotal Vehicles Prevented"
-                                    + "\n§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■");
+                // TRANSLATE: ChunkShield Stats breakdown.
+                if (Global.configLanguageType == 1) EN.main_Subcommand_Stats(sender);
+                else if (Global.configLanguageType == 2) ES.main_Subcommand_Stats(sender);
+                else if (Global.configLanguageType == 3) RU.main_Subcommand_Stats(sender);
             }
             else
             {

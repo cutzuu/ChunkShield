@@ -167,6 +167,22 @@ public class ES
     {
         sender.sendMessage("§cAcción no válida. Sin permiso.");
     }
+    // §7[§6ChunkShield§7] §aConfig reloaded.
+    public static void main_ConfigReloaded(CommandSender sender)
+    {
+        sender.sendMessage("§7[§6ChunkShield§7] §aLa configuración se ha actualizado.");
+    }
+    // Stats Subcommand
+    public static void main_Subcommand_Stats(CommandSender sender)
+    {
+        sender.sendMessage("§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■"
+                + "\n§a■ §6ChunkShield Stats §aDesde la última reinicio§7:" + "\n§a■"
+                + "\n§a■ §3" + main.Global.chunkCount + " §6Áreas analizadas"
+                + "\n§a■ §3" + main.Global.blocksPrevented + " §eBloques eliminados"
+                + "\n§a■ §3" + main.Global.entitiesRemoved + " §6Entidades eliminadas"
+                + "\n§a■ §3" + main.Global.vehiclesPrevented + " §eVehículos eliminadas"
+                + "\n§a■ §7- - - - - - - - - - - - - - - - - - - - - - - - - §a■");
+    }
     // A Loaded Chunk met 6 conditions and removed x10 entities.
     public static @NonNull Component main_AlertChunkScanRemovalSuccess(int totality, ClickEvent<ClickEvent.Payload.Text> copyCoords, HoverEvent<?> hoverCoords)
     {
