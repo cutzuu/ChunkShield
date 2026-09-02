@@ -6,9 +6,9 @@
 
 // https://github.com/cutzuu/chunkshield
 // Supports: 26.2
-// Version: 1.0.9
+// Version: 1.0.11
 
-// Dated: August 23, 2026
+// Dated: September 1, 2026
 
 
 package me.cutzuu.chunkShield;
@@ -42,7 +42,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
