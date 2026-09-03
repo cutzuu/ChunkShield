@@ -10,6 +10,10 @@ You can find the following commands and permissions below.
 - Shows the stats of every removal or incident since the last restart.
 - Requires *chunkshield.stats* perm.
 
+### /cshield help
+- Shows both commands above.
+
+
 # Permissions
 By default, all permissions are provided to Operators.
 ### chunkshield.alerts
