@@ -1,9 +1,9 @@
-package me.cutzuu.chunkShield.listeners;
+package me.mikebloc.chunkShield.listeners;
 
-import me.cutzuu.chunkShield.languages.ES;
-import me.cutzuu.chunkShield.languages.RU;
-import me.cutzuu.chunkShield.main;
-import me.cutzuu.chunkShield.languages.EN;
+import me.mikebloc.chunkShield.languages.ES;
+import me.mikebloc.chunkShield.languages.RU;
+import me.mikebloc.chunkShield.main;
+import me.mikebloc.chunkShield.languages.EN;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;

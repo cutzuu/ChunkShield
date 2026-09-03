@@ -11,13 +11,13 @@
 // Dated: September 1, 2026
 
 
-package me.cutzuu.chunkShield;
-import me.cutzuu.chunkShield.languages.EN;
-import me.cutzuu.chunkShield.languages.ES;
-import me.cutzuu.chunkShield.languages.RU;
-import me.cutzuu.chunkShield.listeners.blockPlaceCheck;
-import me.cutzuu.chunkShield.listeners.entitySummonsCheck;
-import me.cutzuu.chunkShield.listeners.vehicleSummonsCheck;
+package me.mikebloc.chunkShield;
+import me.mikebloc.chunkShield.languages.EN;
+import me.mikebloc.chunkShield.languages.ES;
+import me.mikebloc.chunkShield.languages.RU;
+import me.mikebloc.chunkShield.listeners.blockPlaceCheck;
+import me.mikebloc.chunkShield.listeners.entitySummonsCheck;
+import me.mikebloc.chunkShield.listeners.vehicleSummonsCheck;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
