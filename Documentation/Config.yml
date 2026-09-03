@@ -1,16 +1,25 @@
 #-----------------------------------------------#
-#                   ChunkShield                 
-#                                               
-#                     Cutzuu                    
+#                   ChunkShield                 #
+#                                               #
+#                    MikeBloc                   #
 #-----------------------------------------------#
-# https://github.com/cutzuu/ChunkShield
 
 # Check how ChunkShield maintains server health.
-# https://github.com/cutzuu/ChunkShield/blob/main/Documentation/Technicalities%20Explained.MD
+# https://github.com/mikebloc/ChunkShield/blob/main/Documentation/Technicalities%20Explained.MD
 
 ###############################
 #        Configuration        #
 ###############################
+
+# LANGUAGE SUPPORT
+# 1 - English
+# 2 - Spanish
+# 3 - Russian
+lang: 1
+
+# When anything is purged, a small flame poofs.
+# Does not occur during Chunk Loading and stops after 10 instantaneous removals.
+PurgeEffects: true
 
 # A HUGE CPU Saver. Minimum Threshold to justify checking a chunk at all.
 # This only applies to Scan-Chunks-Upon-Loading.
@@ -27,7 +36,7 @@ ChunkWarning: true
 ChunkScanned: true
 
 # 50% Toggle cuts the checks in half if you prefer.
-# The general scan when a chunk loads if it meets 6 criteria.
+# The general scan triggers when a chunk loads if it meets 6 criteria.
 Scan-Chunks-Upon-Loading: true
 Scan-Chunks-Upon-Loading-50%: false
 # Checks block limit you set every time a player places a block.
@@ -45,15 +54,16 @@ Scan-Chunk-Upon-Opening-Container: false
 # Prevent Server Lag/Crashing via checking vicinity limit for boats and mineCarts.
 VehicleRadiusCheck: true
 
-# Prevents End Portal Frames from getting placed. If you're fine with losing End Portal Frames, set to false then add END_PORTAL_FRAME to list.
+# READ ME
+# Adding Portal Frames to list can break portals.
 # This instead, prevents placement and removes any End Portal Frames found in the inventory.
 end-portal-fix: true
 
 ###############################
 #      Collective Checks      #
 ###############################
-# Collective Chunk Limit for all doors/trapdoors. There are 37 doors in total, including all copper doors and trapdoors.
-# Collective Chunk Limit for all mine carts/boats. There are 5 mine carts and 20 boats in total, including the recent rafts.
+# Collective Chunk Limit for all Doors | Gates | Trapdoors. There are 40+
+# Collective Chunk Limit for all Mine Carts | Boats | Rafts. There are 20+
 # -1 to disable
 ChunkDoorLimit: 40
 ChunkVehicleLimit: 20
@@ -65,9 +75,13 @@ vehicle-radius: 32
 #         Block Limits        #
 ###############################
 # The amount of block items that can be in one chunk.
-# NOTE: Doors are two entities in one so multiply your limit by 2.
-# NOTE: Bedrock Limit will NOT remove the floor or nether roof.
-# NOTE: REDSTONE does not cover anything. Must use REDSTONE_WIRE.
+
+# DO NOT ADD:
+# - Doors, read above.
+# - End Portal Frames, read above.
+
+# NOTE: Natural Bedrock is safe.
+# NOTE: Use REDSTONE_WIRE, not "REDSTONE"
 block-limits:
   ANVIL: 12
   CHIPPED_ANVIL: 12
