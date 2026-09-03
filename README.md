@@ -3,10 +3,6 @@
 
 ### 1.16 API supports up to 1.21.x (Prob 26.x too but have not tested.)
 
-## ⚠️1.16.5 Notice⚠️
-- If you are reading this, 1.16.5 version has not been uploaded yet.
-- STATUS: Converted but temporarily postponed due to new main branch updates.
-
 ## Support
 Drop a ⭐ to support and stay up to date!
 - Consider [donating!](https://ko-fi.com/mikebloc)
@@ -20,5 +16,8 @@ Drop a ⭐ to support and stay up to date!
 - Automatic Protection/Priority over Named Entities.
 - Drop and Go Ready! Default Config does not interfere with vanilla gameplay.
 - Lightweight, all checks are made with performance in mind.
+
+## Differences from main branch (1.0.11 - 26.2 - Sep 2, 2026)
+- The config error for if you have any doors/trapdoors/gates was gutted due to syntax. Sooo don't do that, pumpkin.
 
 [All rights reserved. Mike Bloc](https://github.com/mikebloc/.github/tree/main/documentation/legal.md)
