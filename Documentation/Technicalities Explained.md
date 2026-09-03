@@ -1,5 +1,6 @@
-*This document is meant to be transparent on how our checks are performed.*
+*This document is meant to be transparent on how checks are performed.*
 
+If you run a larger server of 20+ then it is recommended to enable 50% Chance to cut events in half from occurring.
 
 # Measure 1 - Chunk Scan Upon Loading
 When a chunk is loaded, it has to meet a criteria before getting scanned for entities.
@@ -14,11 +15,10 @@ Once we can confirm these six criteria are met then the chunk will be scanned.
 
 
 # Measure 2 - Block Placement
-Block placement runs a quick scan over the chunk for any illegal blocks.
+When a block is placed, it checks for the following:
+- Is the block placed listed in the config? If not, stop.
 
-Like every measure here, you can also limit this one by 50% chance to run if you really prefer.
-
-It does not have any impact on the server.
+If its a listed block, the chunk will receive an instantaneous scan.
 
 
 # Measure 3 - Entity Spawning
@@ -40,11 +40,10 @@ Default: 20 Vechicles can only exist in a 32 block range.
 
 # Measure 5 - Optional Miscellaneous Scans
 There are three optional events that can also trigger a chunk scan. 
+- PlayerCraftEvent
+- MobDeathEvent
+- ContainerOpenEvent
 
 They are disabled by default but have a 10% chance to trigger.
 
 They run off the same six Criteria that Measure 1 operates by.
-
-- PlayerCraftEvent
-- MobDeathEvent
-- ContainerOpenEvent
