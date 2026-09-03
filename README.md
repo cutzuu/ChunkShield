@@ -1,4 +1,4 @@
-
+# ChunkShield
 > Chunk Protection that limits mobs, named mobs, blocks, entities of your choice.
 
 Drop a ⭐ to support and stay up to date!
@@ -12,6 +12,7 @@ Drop a ⭐ to support and stay up to date!
 - All togglable.
 - Drop and Go Ready! Default Config does not interfere with vanilla gameplay.
 - Lightweight, all checks are made with performance in mind.
+- **English / Español / Русский**
 
 ## Simplicity
 - ChunkShield offers all the protections you could want.
