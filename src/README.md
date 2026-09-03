@@ -1,7 +1,7 @@
 # Source code for ChunkShield.
 
-Follow my copyright. All distributions must provide credit.
+Have questions or issues?
+- [X](https://x.com/mikeblocYT)
+- [Discord](https://discord.gg/a5HKupyxSs)
 
-Have questions or issues? Make an issue here or:
-- https://x.com/cutzuuYT
-- https://discord.gg/UE6ytbFHTa
+[All rights reserved. Mike Bloc](https://github.com/mikebloc/.github/tree/main/documentation/legal.md)
