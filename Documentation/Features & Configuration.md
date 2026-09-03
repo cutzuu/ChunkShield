@@ -7,7 +7,7 @@ ChunkShield is a drop and forget style of protection that is meant to prevent us
 
 This can prevent users from trashing an area or attempting to crash your server via snowballs or enchanting table towers.
 
-For more information on how ChunkShield operates, check the [Technicalities Explained Doc.](https://github.com/cutzuu/ChunkShield/blob/main/Documentation/Technicalities%20Explained.MD)
+For more information on how ChunkShield operates, check the [Technicalities Explained Doc.](https://github.com/mikebloc/ChunkShield/blob/main/Documentation/Technicalities%20Explained.md)
 
 ## Chunk Limitations
 You can simply set limits for any entity or block of your choice within a chunk.
