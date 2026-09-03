@@ -1,6 +1,6 @@
 name: ChunkShield
 version: '1.0.11'
-main: me.cutzuu.chunkShield.main
+main: me.mikebloc.chunkShield.main
 api-version: '26.2'
 
 commands:
